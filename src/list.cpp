@@ -15,7 +15,7 @@ void List::print_menu()
 
     if (choice == 4)
     {
-        exit(0);
+        return;
     }
     else if (choice == 3)
     {
