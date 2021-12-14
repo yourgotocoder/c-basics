@@ -1,14 +1,17 @@
 #include "include/database.h"
 
-void Database::write(vector<string> list)
+void Database::write(vector<vector<string>> mainList)
 {
     ofstream db;
     db.open("db/lists.sl");
     if (db.is_open())
     {
-        for (int list_index = 0; list_index < (int)list.size(); list_index++)
+        for (int userIndex = 0; userIndex < (int)mainList[userIndex].size(); userIndex++)
         {
-            db << " * " << list[list_index] << "\n";
+            for (int listIndex = 0; listIndex < (int)mainList[userIndex][listIndex].size(); listIndex++)
+            {
+                db << mainList[userIndex][listIndex] << "\n";
+            }
         }
     }
     else
@@ -18,16 +21,34 @@ void Database::write(vector<string> list)
     db.close();
 }
 
-void Database::read()
+vector<vector<string>> Database::read()
 {
     string line;
     ifstream db;
+
+    vector<string> userList;
     db.open("db/lists.sl");
     if (db.is_open())
     {
         while (getline(db, line, '\n'))
         {
-            cout << line << "\n";
+            if (line.front() == '#')
+            {
+                cout << "Found a hashtag: " << line << "\n";
+                line.erase(line.begin());
+                userList.push_back(line);
+            }
+            else if (line.front() == '%')
+            {
+                cout << "Found a percentage: " << line << "\n";
+                mainList.push_back(userList);
+                userList.clear();
+            }
+            else
+            {
+                cout << "Found an Item: " << line << "\n";
+                userList.push_back(line);
+            }
         }
     }
     else
@@ -35,4 +56,5 @@ void Database::read()
         cout << "Cannot open file for reading. \n";
     }
     db.close();
+    return mainList;
 }
